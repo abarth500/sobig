@@ -3,11 +3,11 @@
 
 <head>
     <script>
-        var ws = new WebSocket("ws://localhost:8081/", ["test"]);
+        let ws = new WebSocket("ws://localhost:8081/", ["test"]);
         ws.onopen = function() {
             ws.send("Hello WebSocket World from browser!");
             ws.onmessage = function(message) {
-                console.log(message.data);
+                console.log('received: %s', message.data);
             };
         }
     </script>

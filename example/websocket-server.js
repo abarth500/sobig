@@ -1,7 +1,16 @@
 const http = require('http'),
+    ws = require('ws'),
     fs = require('fs'),
-    path = require('path'),
-    filename = path.join(__dirname, 'simple.html');
+    path = require('path');
+
+const filename = path.join(__dirname, 'websocket-client.html');
+const wss = new ws.Server({ port: 8081 });
+wss.on('connection', function(client) {
+    client.on('message', function(message) {
+        console.log('received: %s', message);
+    });
+    client.send('Hello WebSocket World from server!');
+});
 
 fs.readFile(filename, 'binary', function(err, filecontent) {
     http.createServer(function(request, response) {
@@ -11,6 +20,7 @@ fs.readFile(filename, 'binary', function(err, filecontent) {
             response.end();
         } else {
             let header = {
+                'Content-Type': 'text/html',
                 'Access-Control-Allow-Origin': '*',
                 'Pragma': 'no-cache',
                 'Cache-Control': 'no-cache'
