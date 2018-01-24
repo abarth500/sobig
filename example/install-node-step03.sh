@@ -1,0 +1,2 @@
+nodebrew install-binary stable
+    
