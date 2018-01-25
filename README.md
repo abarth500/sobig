@@ -9,5 +9,7 @@
 ## 利用したnode.jsのライブラリ一覧
 | ライブラリ  | Webページ | 
 |:----------:|:----------|
+| async      |https://www.npmjs.com/package/async |
 | forever    |https://www.npmjs.com/package/forever | 
+| mongodb    |https://www.npmjs.com/package/mongodb |
 | ws         |https://www.npmjs.com/package/ws | 

@@ -1,0 +1,20 @@
+$ node mongodb-geojson-find.js
+MongoDBサーバへ接続しました。
+1.全件検索----------開始
+2.一致検索----------開始
+3.地理空間検索-------開始
+1.全件検索==========終了
+[ { _id: 5a692e11c3c750f24d20e350,
+    endpoints: [ '首都大学東京', '岡山理科大学' ],
+    line: { type: 'LineString', coordinates: [Array] } },
+  { _id: 5a692e12c3c750f24d20e351,
+    endpoints: [ '大分工業高等専門学校', '帯広畜産大学' ],
+    line: { type: 'LineString', coordinates: [Array] } } ]
+2.一致検索==========終了
+[ { _id: 5a692e11c3c750f24d20e350,
+    endpoints: [ '首都大学東京', '岡山理科大学' ],
+    line: { type: 'LineString', coordinates: [Array] } } ]
+3.地理空間検索=======終了
+[ { _id: 5a692e11c3c750f24d20e350,
+    endpoints: [ '首都大学東京', '岡山理科大学' ],
+    line: { type: 'LineString', coordinates: [Array] } } ]
