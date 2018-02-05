@@ -57,11 +57,12 @@ async.mapValues(values,
         });
 
         $['websocket'].on('connection', function(client) {
-            $['mongodb'].find({}).sort({ time: -1 }).limit(5).toArray((err, docs) => {
-                async.eachSeries(docs, (doc, fin) => {
-                    client.send(JSON.stringify(doc), fin);
+            $['mongodb'].find({}).sort({ time: -1 })
+                .limit(5).toArray((err, docs) => {
+                    async.eachSeries(docs, (doc, fin) => {
+                        client.send(JSON.stringify(doc), fin);
+                    });
                 });
-            });
             client.on('message', function(message) {
                 message = JSON.parse(message);
                 message.time = Date.now();

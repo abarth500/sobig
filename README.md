@@ -7,9 +7,13 @@
 書籍「実践ソーシャルビッグデータ」に掲載されているサンプルコード等を掲載します。
 
 ## 利用したnode.jsのライブラリ一覧
-| ライブラリ  | Webページ | 
-|:----------:|:----------|
-| async      |https://www.npmjs.com/package/async |
-| forever    |https://www.npmjs.com/package/forever | 
-| mongodb    |https://www.npmjs.com/package/mongodb |
-| ws         |https://www.npmjs.com/package/ws | 
+| ライブラリ             | 執筆時Ver | Webページ | 
+|:---------------------:|:---------:|:----------|
+| async                 | 2.6.0     |https://www.npmjs.com/package/async |
+| dbpedia-sparql-client | 0.9.8     |https://www.npmjs.com/package/dbpedia-sparql-client|
+| flickr-sdk            | 3.6.0     |https://www.npmjs.com/package/flickr-sdk|
+| forever               | 0.15.3    |https://www.npmjs.com/package/forever | 
+| mongodb               | 3.0.1     |https://www.npmjs.com/package/mongodb |
+| query-overpass        | 1.5.3     |https://www.npmjs.com/package/query-overpass|
+| twitter               | 1.7.1     |https://www.npmjs.com/package/twitter|
+| ws                    | 4.0.0     |https://www.npmjs.com/package/ws | 
