@@ -73,5 +73,11 @@ typings/
 !.vscode/extensions.json
 .history
 
+sns-api-keys.json
+!example/sns-api-keys.json
+
+*.js
+!example/*.js
+!index.js
 
 # End of https://www.gitignore.io/api/git,node,visualstudiocode

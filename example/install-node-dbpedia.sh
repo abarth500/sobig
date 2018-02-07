@@ -1,0 +1,1 @@
+npm install -save dbpedia-sparql-client

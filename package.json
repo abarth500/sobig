@@ -8,6 +8,7 @@
     },
     "dependencies": {
         "async": "^2.6.0",
+        "cron": "^1.3.0",
         "dbpedia-sparql-client": "^0.9.8",
         "flickr-sdk": "^3.6.0",
         "mongodb": "^3.0.1",
