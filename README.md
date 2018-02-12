@@ -15,6 +15,7 @@
 | flickr-sdk            | 3.6.0     |https://www.npmjs.com/package/flickr-sdk|
 | forever               | 0.15.3    |https://www.npmjs.com/package/forever | 
 | mongodb               | 3.0.1     |https://www.npmjs.com/package/mongodb |
+| posix-argv-parser     | 2.0.0     |https://www.npmjs.com/package/posix-argv-parser |
 | query-overpass        | 1.5.3     |https://www.npmjs.com/package/query-overpass|
 | twitter               | 1.7.1     |https://www.npmjs.com/package/twitter|
 | ws                    | 4.0.0     |https://www.npmjs.com/package/ws | 

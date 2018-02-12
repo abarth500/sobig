@@ -12,6 +12,7 @@
         "dbpedia-sparql-client": "^0.9.8",
         "flickr-sdk": "^3.6.0",
         "mongodb": "^3.0.1",
+        "posix-argv-parser": "^2.0.0",
         "query-overpass": "^1.5.3",
         "twitter": "^1.7.1",
         "ws": "^4.0.0"

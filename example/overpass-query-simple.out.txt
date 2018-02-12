@@ -1,0 +1,588 @@
+{
+	"type": "FeatureCollection",
+	"features": [
+		{
+			"type": "Feature",
+			"id": "node/419537839",
+			"properties": {
+				"type": "node",
+				"id": 419537839,
+				"tags": {
+					"leisure": "stadium",
+					"name": "浅井球場",
+					"sport": "baseball"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					136.3129631,
+					35.4346898
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/737218336",
+			"properties": {
+				"type": "node",
+				"id": 737218336,
+				"tags": {
+					"leisure": "stadium",
+					"name": "ヤマハスタジアム (Yamaha Stadium)",
+					"sport": "soccer"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					137.8753021,
+					34.7247155
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/822350243",
+			"properties": {
+				"type": "node",
+				"id": 822350243,
+				"tags": {
+					"leisure": "stadium",
+					"name": "市民球場",
+					"name:en": "Ball Park",
+					"name:ja": "市民球場",
+					"sport": "baseball"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					140.583734,
+					36.3917191
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/1416000278",
+			"properties": {
+				"type": "node",
+				"id": 1416000278,
+				"tags": {
+					"leisure": "stadium",
+					"name": "中山公園野球場",
+					"sport": "baseball"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					137.2319403,
+					36.1472154
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/1417603860",
+			"properties": {
+				"type": "node",
+				"id": 1417603860,
+				"tags": {
+					"leisure": "stadium",
+					"name": "テニスドームかしわ台 junleo"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					139.4138118,
+					35.4632534
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/1611946240",
+			"properties": {
+				"type": "node",
+				"id": 1611946240,
+				"tags": {
+					"leisure": "stadium",
+					"name": "青梅スタジアム",
+					"name:en": "Ome Stadium",
+					"name:ja": "青梅スタジアム",
+					"source": "Bing",
+					"sport": "baseball"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					139.321327,
+					35.7951738
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/1928632031",
+			"properties": {
+				"type": "node",
+				"id": 1928632031,
+				"tags": {
+					"leisure": "stadium",
+					"name": "日立柏サッカー場",
+					"sport": "soccer"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					139.9751236,
+					35.8484562
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/2125878855",
+			"properties": {
+				"type": "node",
+				"id": 2125878855,
+				"tags": {
+					"leisure": "stadium",
+					"name": "花月競輪場"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					139.668659,
+					35.501646
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/2130586872",
+			"properties": {
+				"type": "node",
+				"id": 2130586872,
+				"tags": {
+					"description": "Tennis",
+					"leisure": "stadium"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					139.727217,
+					36.399257
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/2132116898",
+			"properties": {
+				"type": "node",
+				"id": 2132116898,
+				"tags": {
+					"leisure": "stadium",
+					"sport": "athletics"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					139.725121,
+					36.402709
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/2132118879",
+			"properties": {
+				"type": "node",
+				"id": 2132118879,
+				"tags": {
+					"leisure": "stadium",
+					"sport": "baseball"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					139.722946,
+					36.400478
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/2132119997",
+			"properties": {
+				"type": "node",
+				"id": 2132119997,
+				"tags": {
+					"leisure": "stadium",
+					"sport": "baseball"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					139.722796,
+					36.401894
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/2132120354",
+			"properties": {
+				"type": "node",
+				"id": 2132120354,
+				"tags": {
+					"leisure": "stadium",
+					"sport": "soccer"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					139.722774,
+					36.403276
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/2147496546",
+			"properties": {
+				"type": "node",
+				"id": 2147496546,
+				"tags": {
+					"leisure": "stadium",
+					"name": "富山競輪",
+					"sport": "cycling"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					137.2352532,
+					36.7577499
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/2342893830",
+			"properties": {
+				"type": "node",
+				"id": 2342893830,
+				"tags": {
+					"leisure": "stadium",
+					"name": "Iwaki Green Stadium",
+					"name:ja": "いわきグリーンスタジアム",
+					"sport": "baseball"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					140.860062,
+					37.017174
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/2342894036",
+			"properties": {
+				"type": "node",
+				"id": 2342894036,
+				"tags": {
+					"leisure": "stadium",
+					"name": "いわき21世紀の森公園",
+					"sport": "rugby_union"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					140.862185,
+					37.017204
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/3112293673",
+			"properties": {
+				"type": "node",
+				"id": 3112293673,
+				"tags": {
+					"leisure": "stadium",
+					"name": "びわのかげ総合運動公園"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					139.7597547,
+					37.1994063
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/3612909404",
+			"properties": {
+				"type": "node",
+				"id": 3612909404,
+				"tags": {
+					"leisure": "stadium",
+					"name": "ルネサンス"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					139.8200666,
+					35.6973629
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/3687591473",
+			"properties": {
+				"type": "node",
+				"id": 3687591473,
+				"tags": {
+					"leisure": "stadium",
+					"name": "中山競馬場",
+					"name:en": "Nakayama Race Course",
+					"name:ja_kana": "なかやまけいばじょう",
+					"name:ja_rm": "nakayamakeibajō"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					139.9603658,
+					35.7246583
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/3865146903",
+			"properties": {
+				"type": "node",
+				"id": 3865146903,
+				"tags": {
+					"leisure": "stadium",
+					"name": "グランド"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					140.1908161,
+					35.9316185
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/3888689757",
+			"properties": {
+				"type": "node",
+				"id": 3888689757,
+				"tags": {
+					"leisure": "stadium",
+					"name": "フットサル場"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					139.775598,
+					35.625084
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/3888690557",
+			"properties": {
+				"type": "node",
+				"id": 3888690557,
+				"tags": {
+					"leisure": "stadium",
+					"name": "テニスコート"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					139.775478,
+					35.625022
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/4343836511",
+			"properties": {
+				"type": "node",
+				"id": 4343836511,
+				"tags": {
+					"leisure": "stadium",
+					"name": "カマボコ屋根体育館"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					138.0655916,
+					36.0592564
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/4613622553",
+			"properties": {
+				"type": "node",
+				"id": 4613622553,
+				"tags": {
+					"leisure": "stadium",
+					"name": "岡崎市矢作体育館"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					137.1286619,
+					34.9677933
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/4678441765",
+			"properties": {
+				"type": "node",
+				"id": 4678441765,
+				"tags": {
+					"leisure": "stadium",
+					"name": "町田市立総合体育館"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					139.4792833,
+					35.5359377
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/5275432921",
+			"properties": {
+				"type": "node",
+				"id": 5275432921,
+				"tags": {
+					"leisure": "stadium"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					140.14744,
+					35.63418
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"id": "node/5275434322",
+			"properties": {
+				"type": "node",
+				"id": 5275434322,
+				"tags": {
+					"leisure": "stadium"
+				},
+				"relations": [],
+				"meta": {}
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					140.1451757,
+					35.6347137
+				]
+			}
+		}
+	]
+}
