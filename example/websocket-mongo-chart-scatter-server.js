@@ -6,13 +6,13 @@ const http = require('http'),
     mongoClient = require('mongodb').MongoClient;
 
 const values = {
-    'html': path.join(__dirname, 'websocket-mongo-chat-client.html'),
+    'html': path.join(__dirname, 'websocket-mongo-chart-scatter-client.html'),
     'http': 8080,
     'websocket': 8081,
     'mongodb': {
         url: 'mongodb://localhost:27017',
         db: 'sobig',
-        collection: 'chat',
+        collection: 'flickr',
     }
 };
 
@@ -56,32 +56,27 @@ async.mapValues(values,
             response.end();
         });
 
-        $['websocket'].on('connection', function(client) {
-            $['mongodb'].find({}).sort({ time: -1 })
-                .limit(5).toArray((err, docs) => {
+        $['websocket'].on('connection', (client) => {
+
+            client.on('message', (maker) => {
+                $['mongodb'].find({"exif.Make":"Canon"}, {
+                    projection: {
+                        'id': 1,
+                        'url': 1,
+                        'exif.FNumber': 1,
+                        'exif.ExposureTime': 1,
+                        'exif.ISO': 1,
+                        'exif.Flash': 1
+                    }
+                }).toArray((err, docs) => {
+                    client.send(JSON.stringify(docs));
+                    /*
                     async.eachSeries(docs, (doc, fin) => {
-                        client.send(JSON.stringify(doc), fin);
+                        console.log(doc.exif.ExposureTime + "\t" + doc.exif.FNumber);
+                        //async.setImmediate(fin, null);
+                        client.send(doc.exif.ExposureTime + "\t" + doc.exif.FNumber, fin);
                     });
-                });
-            client.on('message', function(message) {
-                message = JSON.parse(message);
-                message.time = Date.now();
-                async.parallel([
-                    (callback) => {
-                        $['mongodb'].insertOne(message, callback);
-                    },
-                    (callback) => {
-                        async.each($['websocket'].clients,
-                            (_client, fin) => {
-                                if (_client.readyState === ws.OPEN) {
-                                    _client.send(JSON.stringify(message));
-                                }
-                                fin(null);
-                            },
-                            callback);
-                    },
-                ], (err, result) => {
-                    console.log('received: %s', JSON.stringify(message));
+                    */
                 });
             });
         });

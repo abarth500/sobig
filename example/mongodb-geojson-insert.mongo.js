@@ -2,7 +2,7 @@ db.createCollection('geoJson');
 db.geoJson.createIndex({ endpoitns: 1 });
 db.geoJson.createIndex({ line: "2dsphere" });
 db.geoJson.insert({
-    "endpoitns": ["首都大学東京", "岡山理科大学"],
+    "endpoints": ["首都大学東京", "岡山理科大学"],
     "line": {
         "type": "LineString",
         "coordinates": [
@@ -12,7 +12,7 @@ db.geoJson.insert({
     }
 });
 db.geoJson.insert({
-    "endpoitns": ["大分工業高等専門学校", "帯広畜産大学"],
+    "endpoints": ["大分工業高等専門学校", "帯広畜産大学"],
     "line": {
         "type": "LineString",
         "coordinates": [

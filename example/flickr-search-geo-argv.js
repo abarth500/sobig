@@ -4,19 +4,48 @@ const Flickr = require('flickr-sdk'),
     apikeys = require(__dirname + '/sns-api-keys.json');
 const flickr = new Flickr(apikeys.flickr.consumer_key);
 
-const url = 'mongodb://localhost:27017',
-    dbName = 'sobig',
-    colName = 'flickr',
-    lat = 35.6590789,
-    lon = 139.6962405,
-    radius = 3;
+var pap = require("posix-argv-parser");
+var args = pap.create();
+var v = pap.validators;
+args.createOption(["-y", "--latitude"], {
+    defaultValue: 35.6590789,
+    validators: [v.number("Custom message. ${1} must be a Float.")],
+    transform: (value) => { return parseFloat(value); }
+});
+args.createOption(["-x", "--longitude"], {
+    defaultValue: 139.6962405,
+    validators: [v.number("Custom message. ${1} must be a Float.")],
+    transform: (value) => { return parseFloat(value); }
+});
+args.createOption(["-r", "--radius"], {
+    defaultValue: 5,
+    validators: [v.integer("Custom message. ${1} must be a Integer.")],
+    transform: (value) => { return parseInt(value, 10); }
+});
 
 async.waterfall([
     (callback) => {
-        //接続処理
-        mongoClient.connect(url, callback);
+        args.parse(process.argv.slice(2), (err, options) => {
+            const opt = {
+                url: 'mongodb://localhost:27017',
+                dbName: 'sobig',
+                colName: 'flickr',
+                lat: options["--latitude"].value,
+                lon: options["--longitude"].value,
+                radius: options["--radius"].value
+            };
+            console.log('ARGV', options["--latitude"].value,
+                options["--longitude"].value, options["--radius"].value);
+            callback(err, opt);
+        });
     },
-    (client, callback) => {
+    (opt, callback) => {
+        //接続処理
+        mongoClient.connect(opt.url, (err, client) => {
+            callback(err, opt, client)
+        });
+    },
+    (opt, client, callback) => {
         //接続後の処理
         process.on('exit', () => {
             console.log('データベースの接続を切断して終了します。');
@@ -26,11 +55,11 @@ async.waterfall([
             console.log('SIGINTを受け取りました。');
             process.exit(0);
         });
-        const db = client.db(dbName),
-            col = db.collection(colName);
-        callback(null, col);
+        const db = client.db(opt.dbName),
+            col = db.collection(opt.colName);
+        callback(null, opt, col);
     },
-    (col, callback) => {
+    (opt, col, callback) => {
         //コレクションの再構築
         col.dropIndexes().then(() => {
             col.remove({}, { 'w': 1 }).then(() => {
@@ -40,16 +69,16 @@ async.waterfall([
                     { key: { dateupload: 1 } },
                     { key: { datetaken: 1 } }
                 ], {}, (error) => {
-                    callback(error, col);
+                    callback(error, opt, col);
                 })
             }).catch((error) => {
-                callback(error, col);
+                callback(error, opt, col);
             });
         }).catch((error) => {
-            callback(error, col);
+            callback(error, opt, col);
         });
     },
-    (col, callback) => {
+    (opt, col, callback) => {
         //結果をデータベースに格納する
         const insertDB = function(photos, fin) {
             let n = 0;
@@ -144,7 +173,7 @@ async.waterfall([
                 }
             );
         }
-        queryFlickr(lat, lon, radius, callback);
+        queryFlickr(opt.lat, opt.lon, opt.radius, callback);
     }
 ], (error) => {
     if (error) {
