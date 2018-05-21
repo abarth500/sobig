@@ -7,8 +7,8 @@ const flickr = new Flickr(apikeys.flickr.consumer_key);
 const url = 'mongodb://localhost:27017',
     dbName = 'sobig',
     colName = 'flickr',
-    lat = 35.6590789,
-    lon = 139.6962405,
+    lat = 35.659043874914,
+    lon = 139.70059168537,
     radius = 3;
 
 async.waterfall([

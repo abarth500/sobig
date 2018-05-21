@@ -78,6 +78,7 @@ sns-api-keys.json
 
 *.js
 !example/*.js
+!util/*.js
 !index.js
 
 dev/

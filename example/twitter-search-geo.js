@@ -7,8 +7,8 @@ const client = new Twitter(apikeys.twitter);
 const url = 'mongodb://localhost:27017',
     dbName = 'sobig',
     colName = 'twitter',
-    query = 'ハチ公',
-    geocode = '35.6590789,139.6962405,3km';
+    query = '渋谷',
+    geocode = '35.659043874914,139.70059168537,5km';
 
 async.waterfall([
     (callback) => {
