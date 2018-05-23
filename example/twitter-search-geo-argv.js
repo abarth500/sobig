@@ -8,12 +8,12 @@ var pap = require("posix-argv-parser");
 var args = pap.create();
 var v = pap.validators;
 args.createOption(["-y", "--latitude"], {
-    defaultValue: 35.6590789,
+    defaultValue: 35.659043874914,
     validators: [v.number("Custom message. ${1} must be a Float.")],
     transform: (value) => { return parseFloat(value); }
 });
 args.createOption(["-x", "--longitude"], {
-    defaultValue: 139.6962405,
+    defaultValue: 139.70059168537,
     validators: [v.number("Custom message. ${1} must be a Float.")],
     transform: (value) => { return parseFloat(value); }
 });

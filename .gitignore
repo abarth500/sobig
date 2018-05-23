@@ -81,7 +81,6 @@ sns-api-keys.json
 !util/*.*
 !index.js
 
-./package-lock.json
 
 dev/
 
