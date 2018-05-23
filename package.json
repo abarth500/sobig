@@ -8,15 +8,15 @@
     },
     "dependencies": {
         "@turf/turf": "^5.1.6",
-        "async": "^2.6.0",
+        "async": "^2.6.1",
         "cron": "^1.3.0",
         "dbpedia-sparql-client": "^0.9.8",
-        "flickr-sdk": "^3.6.0",
-        "mongodb": "^3.0.1",
+        "flickr-sdk": "^3.7.0",
+        "mongodb": "^3.1.0-beta4",
         "posix-argv-parser": "^2.0.0",
         "query-overpass": "^1.5.3",
         "twitter": "^1.7.1",
-        "ws": "^4.0.0"
+        "ws": "^5.2.0"
     },
     "devDependencies": {},
     "scripts": {

@@ -77,9 +77,11 @@ sns-api-keys.json
 !example/sns-api-keys.json
 
 *.js
-!example/*.js
-!util/*.js
+!example/*.*
+!util/*.*
 !index.js
+
+./package-lock.json
 
 dev/
 
