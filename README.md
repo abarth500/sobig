@@ -16,8 +16,9 @@
 | forever               | 0.15.3    |https://www.npmjs.com/package/forever | 
 | mongodb               | 3.0.1     |https://www.npmjs.com/package/mongodb |
 | posix-argv-parser     | 2.0.0     |https://www.npmjs.com/package/posix-argv-parser |
+| python-shell          | 0.5.0     |https://www.npmjs.com/package/python-shell |
 | query-overpass        | 1.5.3     |https://www.npmjs.com/package/query-overpass|
-| turf                  | 5.1.6     | https://www.npmjs.com/package/@turf/turf |
+| turf                  | 5.1.6     |https://www.npmjs.com/package/@turf/turf |
 | twitter               | 1.7.1     |https://www.npmjs.com/package/twitter |
 | ws                    | 4.0.0     |https://www.npmjs.com/package/ws | 
 

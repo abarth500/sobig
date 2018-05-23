@@ -14,6 +14,7 @@
         "flickr-sdk": "^3.7.0",
         "mongodb": "^3.1.0-beta4",
         "posix-argv-parser": "^2.0.0",
+        "python-shell": "^0.5.0",
         "query-overpass": "^1.5.3",
         "twitter": "^1.7.1",
         "ws": "^5.2.0"

@@ -81,7 +81,7 @@ sns-api-keys.json
 !util/*.*
 !index.js
 
-
+algorithms/
 dev/
 
 # End of https://www.gitignore.io/api/git,node,visualstudiocode
