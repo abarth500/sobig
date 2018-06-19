@@ -22,6 +22,9 @@ args.createOption(["-r", "--radius"], {
     validators: [v.integer("Custom message. ${1} must be a Integer.")],
     transform: (value) => { return parseInt(value, 10); }
 });
+args.createOption(["-q", "--query"], {
+    defaultValue: "",
+});
 
 async.waterfall([
     (callback) => {
@@ -32,10 +35,10 @@ async.waterfall([
                 colName: 'flickr',
                 lat: options["--latitude"].value,
                 lon: options["--longitude"].value,
-                radius: options["--radius"].value
+                radius: options["--radius"].value,
+                query: options["--query"].value
             };
-            console.log('ARGV', options["--latitude"].value,
-                options["--longitude"].value, options["--radius"].value);
+            console.log('ARGV', options["--latitude"].value, options["--longitude"].value, options["--radius"].value, options["--query"].value);
             callback(err, opt);
         });
     },
@@ -60,26 +63,41 @@ async.waterfall([
         callback(null, opt, col);
     },
     (opt, col, callback) => {
-        //コレクションの再構築
-        col.dropIndexes().then(() => {
-            col.remove({}, { 'w': 1 }).then(() => {
-                col.createIndexes([
-                    { key: { id: 1 }, unique: true },
-                    { key: { coordinates: "2dsphere" } },
-                    { key: { dateupload: 1 } },
-                    { key: { datetaken: 1 } }
-                ], {}, (error) => {
-                    callback(error, opt, col);
-                })
-            }).catch((error) => {
+        //データ削除(もしコレクションが空でなければ)
+        col.count({}, {}, (error, result) => {
+            if (error) {
                 callback(error, opt, col);
-            });
-        }).catch((error) => {
-            callback(error, opt, col);
+            } else {
+                if (result > 0) {
+                    col.dropIndexes().then(() => {
+                        col.remove({}, { 'w': 1 }).then(() => {
+                            callback(error, opt, col);
+                        }).catch((error) => {
+                            callback(error, opt, col);
+                        });
+                    }).catch((error) => {
+                        callback(error, opt, col);
+                    });
+                } else {
+                    callback(error, opt, col);
+                }
+            }
         });
     },
     (opt, col, callback) => {
+        //コレクションの再構築
+        col.createIndexes([
+            { key: { id: 1 }, unique: true },
+            { key: { geotag: "2dsphere" } },
+            { key: { dateupload: 1 } },
+            { key: { datetaken: 1 } }
+        ], {}, (error) => {
+            callback(error, opt, col);
+        })
+    },
+    (opt, col, callback) => {
         //結果をデータベースに格納する
+        let nn = 0;
         const insertDB = function(photos, fin) {
             let n = 0;
             async.each(photos, (photo, finPhoto) => {
@@ -87,14 +105,14 @@ async.waterfall([
                     //重要な項目のみ抜粋とExifの変形
                     const exif = require('./util/util.js').exif;　 /* 簡易的にExif情報を使いやすく変形 */
                     const item = {
-                        dateupload: new Date(photo.dateupload),
-                        datetaken: new Date(photo.datetaken),
+                        dateupload: new Date(photo.dateupload * 1000),
+                        datetaken: new Date(photo.datetaken * 1000),
                         id: photo.id,
                         owner: photo.owner,
                         tags: photo.tags == "" ? [] : photo.tags.split(' '),
                         exif: exif(photo.exif),
                         url: photo.url_m,
-                        coordinates: {
+                        geotag: {
                             "type": "Point",
                             "coordinates": [
                                 parseFloat(photo.longitude),
@@ -116,7 +134,8 @@ async.waterfall([
                 if (error) {
                     console.log('失敗(Insert)', photo.dateupload, error);
                 } else {
-                    console.log("\t" + n + '件挿入');
+                    nn += n;
+                    console.log("\t" + n + '件挿入　(全' + nn + '件)');
                 }
                 fin(error);
             });
@@ -126,23 +145,27 @@ async.waterfall([
         const per_page = 250; /* リクエストあたりの写真取得数 */
         const queryFlickr = function(lat, lon, radius, fin) {
             let maxDate = Math.floor((new Date()).getTime() / 1000);
-            let lastNoP = per_page;
+            let isLast = false;
             async.doWhilst(
                 (nextQuery) => {
-                    console.log("[Q]", maxDate);
+                    console.log("[Q]", new Date(maxDate * 1000).toISOString());
                     flickr.photos.search({
                         lat: lat,
                         lon: lon,
                         radius: radius,
+                        has_geo: 1,
                         max_upload_date: maxDate,
                         sort: 'date-posted-desc',
                         extras: 'date_upload,date_taken,tags,url_m,geo',
                         per_page: per_page
                     }).then((resSearch) => {
                         let photos = resSearch.body.photos;
-                        lastNoP = photos.photo.length;
+                        console.log("Length:" + photos.photo.length, "Perpage:" + photos.perpage, "Pages:" + photos.pages, "Page:" + photos.page);
+                        isLast = photos.pages == photos.page;
                         async.mapLimit(photos.photo, 6, (photo, finPhoto) => {
-                            maxDate = Math.min(maxDate, parseInt(photo.dateupload));
+                            photo.dateupload = parseInt(photo.dateupload);
+                            photo.datetaken = Math.round(new Date(photo.datetaken) / 1000);
+                            maxDate = Math.min(maxDate, photo.dateupload);
                             flickr.photos.getExif({
                                 photo_id: photo.id
                             }).then((resExif) => {
@@ -165,8 +188,7 @@ async.waterfall([
                     });
                 },
                 () => {
-                    console.log(lastNoP);
-                    return lastNoP == per_page;
+                    return !isLast;
                 },
                 (err) => {
                     fin(err);

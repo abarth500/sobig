@@ -30,27 +30,45 @@ async.waterfall([
             col = db.collection(colName);
         callback(null, col);
     },
-    (col, callback) => {
-        //コレクションの再構築
-        col.dropIndexes().then(() => {
-            col.remove({}, { 'w': 1 }).then(() => {
-                col.createIndexes([
-                    { key: { id: 1 }, unique: true },
-                    { key: { coordinates: "2dsphere" } },
-                    { key: { dateupload: 1 } },
-                    { key: { datetaken: 1 } }
-                ], {}, (error) => {
-                    callback(error, col);
-                })
-            }).catch((error) => {
-                callback(error, col);
-            });
-        }).catch((error) => {
-            callback(error, col);
+    (opt, client, callback) => {
+        //接続後の処理
+        process.on('exit', () => {
+            console.log('データベースの接続を切断して終了します。');
+            client.close();
+        });
+        process.on('SIGINT', () => {
+            console.log('SIGINTを受け取りました。');
+            process.exit(0);
+        });
+        const db = client.db(opt.dbName),
+            col = db.collection(opt.colName);
+        callback(null, opt, col);
+    },
+    (opt, col, callback) => {
+        //データ削除(もしコレクションが空でなければ)
+        col.count({}, {}, (error, result) => {
+            if (error) {
+                callback(error, opt, col);
+            } else {
+                if (result > 0) {
+                    col.dropIndexes().then(() => {
+                        col.remove({}, { 'w': 1 }).then(() => {
+                            callback(error, opt, col);
+                        }).catch((error) => {
+                            callback(error, opt, col);
+                        });
+                    }).catch((error) => {
+                        callback(error, opt, col);
+                    });
+                } else {
+                    callback(error, opt, col);
+                }
+            }
         });
     },
     (col, callback) => {
         //結果をデータベースに格納する
+        let nn = 0;
         const insertDB = function(photos, fin) {
             let n = 0;
             async.each(photos, (photo, finPhoto) => {
@@ -58,8 +76,8 @@ async.waterfall([
                     //重要な項目のみ抜粋とExifの変形
                     const exif = require('./util/util.js').exif;　 /* 簡易的にExif情報を使いやすく変形 */
                     const item = {
-                        dateupload: new Date(photo.dateupload),
-                        datetaken: new Date(photo.datetaken),
+                        dateupload: new Date(photo.dateupload * 1000),
+                        datetaken: new Date(photo.datetaken * 1000),
                         id: photo.id,
                         owner: photo.owner,
                         tags: photo.tags == "" ? [] : photo.tags.split(' '),
@@ -87,7 +105,8 @@ async.waterfall([
                 if (error) {
                     console.log('失敗(Insert)', photo.dateupload, error);
                 } else {
-                    console.log("\t" + n + '件挿入');
+                    nn += n;
+                    console.log("\t" + n + '件挿入　(全' + nn + '件)');
                 }
                 fin(error);
             });
@@ -97,7 +116,7 @@ async.waterfall([
         const per_page = 250; /* リクエストあたりの写真取得数 */
         const queryFlickr = function(lat, lon, radius, fin) {
             let maxDate = Math.floor((new Date()).getTime() / 1000);
-            let lastNoP = per_page;
+            let isLast = false;
             async.doWhilst(
                 (nextQuery) => {
                     console.log("[Q]", maxDate);
@@ -105,13 +124,15 @@ async.waterfall([
                         lat: lat,
                         lon: lon,
                         radius: radius,
+                        has_geo: 1,
                         max_upload_date: maxDate,
                         sort: 'date-posted-desc',
                         extras: 'date_upload,date_taken,tags,url_m,geo',
                         per_page: per_page
                     }).then((resSearch) => {
                         let photos = resSearch.body.photos;
-                        lastNoP = photos.photo.length;
+                        console.log("Length:" + photos.photo.length, "Perpage:" + photos.perpage, "Pages:" + photos.pages, "Page:" + photos.page);
+                        isLast = photos.pages == photos.page;
                         async.mapLimit(photos.photo, 6, (photo, finPhoto) => {
                             maxDate = Math.min(maxDate, parseInt(photo.dateupload));
                             flickr.photos.getExif({
@@ -136,8 +157,7 @@ async.waterfall([
                     });
                 },
                 () => {
-                    console.log(lastNoP);
-                    return lastNoP == per_page;
+                    return !isLast;
                 },
                 (err) => {
                     fin(err);

@@ -1,59 +1,502 @@
 <!doctype html>
 <html lang="ja">
+<!-- node flickr-search-geo-argv.js -y=33.81065704285 -x=-117.9218500225 -r=10-->
+<!-- node twitter-search-geo-argv.js -y=33.81065704285 -x=-117.9218500225 -r=10-->
 
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin="">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.3.0/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.3.0/dist/MarkerCluster.Default.css">
 </head>
 
 <body>
     <div id="form" class="container">
         <form id="chat-form">
             <div class="form-row">
-                <div class="form-group col-md-3">
-                    <label for="chat-hn">名前:</label>
-                    <input type="text" class="form-control" id="chat-hn">
-                </div>
-                <div class="form-group col-md-8">
-                    <label for="chat-text">発言：</label>
-                    <input type="text" class="form-control" id="chat-text">
+                <div class="form-group col-md-1">
+                    <select class="form-control form-control-sm" id="form-dataset">
+                    </select>
                 </div>
                 <div class="form-group col-md-1">
+                    <select class="form-control form-control-sm" id="form-algorithm">
+                    </select>
+                </div>
+                <div class="form-group col-md-2">
+                    <input type="text" class="form-control form-control-sm" id="form-bbox" placeholder="BBOX" readonly data-toggle="tooltip" data-html="true" data-placement="bottom" title="west,south,east,north">
+                </div>
+                <div class="form-group col-md-3">
+                    <input type="text" class="form-control form-control-sm" id="form-q" placeholder="検索ワード">
+                </div>
+                <div class="form-group col-md-3">
+                    <input type="text" class="form-control form-control-sm" id="form-opt" placeholder="オプション">
+                </div>
+                <div class="form-group col-md-2">
                     <label for="chat-btn">&nbsp;&nbsp;</label>
-                    <button type="submit" class="btn btn-primary" id="chat-btn">発言</button>
+                    <button type="submit" class="btn btn-primary btn-sm" id="chat-btn">発言</button>
                 </div>
             </div>
         </form>
     </div>
     <div id="main" class="container">
     </div>
+    <div class="modal fade" id="modal-bbox" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Boundary Box Creator</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" id="bboxmap" style="height:60vh;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="clear-BBOX" class="btn btn-outline-warning" data-dismiss="modal">Clear BBOX</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Set BBOX</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw==" crossorigin=""></script>
+    <script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.3.0"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.3.0/dist/leaflet.markercluster.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/async@2.6.1/dist/async.min.js" integrity="sha256-QRRHCc3xM0GNZvTCvi0vm2f9zdOiOptAy6xGq7qN5hI=" crossorigin="anonymous"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/highcharts-3d.js"></script>
+    <script src="https://code.highcharts.com/modules/boost.js"></script>
+    <script src="https://code.highcharts.com/modules/wordcloud.js"></script>
+    <script src="https://code.highcharts.com/modules/heatmap.js"></script>
+    <script src="leaflet-heat.js"></script>
+    <script src="palette.js"></script>
+
     <script>
         $(function() {
-            let ws = new WebSocket("ws://localhost:8081/", ["test"]);
+            $('[data-toggle="tooltip"]').tooltip();
+            $('#clear-BBOX').on('click', () => {
+                $('#form-bbox').val('');
+            });
+            let rid = 0;
+            let showResult = function(envelope) {
+                console.log(envelope);
+                $('#form-opt').val(JSON.stringify(envelope.opt));
+                let ID = rid++;
+                let div = $('<div>', {
+                    class: 'alert alert-' + (envelope.type == 'error' ? 'warning' : 'primary'),
+                    role: 'alert'
+                });
+                let mapdiv;
+                switch (envelope.type) {
+                    case 'error':
+                        mapdiv = $('<div>', {
+                            id: 'error_' + ID,
+                            style: 'height:90vh;',
+                            html: envelope.message
+                        }).appendTo(div);
+                        break;
+                    case 'wordCloud':
+                        mapdiv = $('<div>', {
+                            id: 'wc_' + ID,
+                            style: 'height:90vh;'
+                        }).appendTo(div);
+                        break;
+                    case 'heatChart':
+                        mapdiv = $('<div>', {
+                            id: 'hc_' + ID
+                        }).appendTo(div);
+                        break;
+                    case 'map':
+                        mapdiv = $('<div>', {
+                            id: 'map_' + ID,
+                            style: 'height:90vh;'
+                        }).appendTo(div);
+                        break;
+                    case 'heat':
+                        mapdiv = $('<div>', {
+                            id: 'map_' + ID,
+                            style: 'height:90vh;'
+                        }).appendTo(div);
+                        break;
+                        break;
+                    case 'map-clustered':
+                        $('<div>', {
+                            id: 'map_' + ID,
+                            style: 'height:90vh;'
+                        }).appendTo(div);
+                        break;
+                    case 'scatter':
+                        $('<div>', {
+                            id: 'plot_' + ID,
+                            style: 'height:90vh;'
+                        }).appendTo(div);
+                        break;
+                    case 'table':
+                        let tTable = $('<table>', {
+                            id: 'table_' + ID,
+                            class: 'table table-bordered table-dark table-sm'
+                        });
+                        for (let title in envelope.result) {
+                            let colspan = envelope.result[title][Object.keys(envelope.result[title])[0]].length + 1;
+                            let tHeadTR = $('<tr>');
+                            let tHeadTD = $('<td>', {
+                                colspan: colspan,
+                                class: 'font-weight-bold'
+                            });
+                            tHeadTD.html(title);
+                            tHeadTD.appendTo(tHeadTR);
+                            tHeadTR.appendTo(tTable);
+                            for (let score in envelope.result[title]) {
+                                let tTR = $('<tr>');
+                                let tTD = $('<td>', {
+                                    class: 'small font-weight-bold'
+                                });
+                                tTD.html(score);
+                                tTD.appendTo(tTR);
+                                envelope.result[title][score].forEach((s) => {
+                                    let td = $('<td>', {
+                                        class: 'small'
+                                    });
+                                    td.html(s);
+                                    td.appendTo(tTR);
+                                });
+                                tTR.appendTo(tTable);
+                            }
+                        }
+                        $('<tr>').appendTo(tTable);
+                        tTable.appendTo(div);
+                        break;
+                    default:
+                        div.html('<b>' + envelope.type + '</b>: ' + envelope.result);
+                }
+                div.prependTo($('#main'));
+                let rMap, rLayer, rMarkers;
+                let colors = palette('mpn65', Object.keys(envelope.result).length);
+                switch (envelope.type) {
+                    case 'map':
+                        rMap = L.map('map_' + ID).setView([51.505, -0.09], 13);
+                        rLayer = new L.StamenTileLayer("toner").addTo(rMap);
+                        rMarkers = L.markerClusterGroup();
+                        envelope.result.forEach((doc) => {
+                            let pop = '<a href="' + doc.url + '">Link</a>';
+                            if (doc.url.endsWith('.jpg')) {
+                                pop = '<img width="200" src="' + doc.url + '">';
+                            }
+                            rMarkers.addLayer(L.marker([doc.geotag.coordinates[1], doc.geotag.coordinates[0]]).bindPopup(pop));
+                        });
+                        rMap.addLayer(rMarkers);
+                        rMap.fitBounds([
+                            [envelope.q.bbox[1], envelope.q.bbox[0]],
+                            [envelope.q.bbox[3], envelope.q.bbox[2]]
+                        ]);
+                        break;
+                    case 'heat':
+                        let data = [];
+                        envelope.result.forEach((doc) => {
+                            data.push([doc.geotag.coordinates[1], doc.geotag.coordinates[0], 1]);
+                        });
+                        rMap = L.map('map_' + ID).setView([51.505, -0.09], 13);
+                        rLayer = new L.StamenTileLayer("toner").addTo(rMap);
+                        var heat = L.heatLayer(data, {
+                            radius: 15
+                        }).addTo(rMap);
+                        rMap.fitBounds([
+                            [envelope.q.bbox[1], envelope.q.bbox[0]],
+                            [envelope.q.bbox[3], envelope.q.bbox[2]]
+                        ]);
+                        break;
+                    case 'map-clustered':
+                        let c = {};
+                        rMap = L.map('map_' + ID).setView([51.505, -0.09], 13);
+                        rLayer = new L.StamenTileLayer("toner").addTo(rMap);
+                        async.eachOf(envelope.result, (cluster, idx, callback) => {
+                            if (!c[idx]) {
+                                c[idx] = Object.keys(c).length;
+                            }
+                            L.geoJSON(cluster, {
+                                pointToLayer: (geoJsonPoint, latlng) => {
+                                    //console.log(geoJsonPoint.properties.cluster, c[geoJsonPoint.properties.cluster], colors[c[geoJsonPoint.properties.cluster]]);
+                                    return L.circleMarker(latlng, {
+                                        radius: 5,
+                                        weight: 1,
+                                        color: '#' + colors[c[geoJsonPoint.properties.cluster]],
+                                        fillColor: '#' + colors[c[geoJsonPoint.properties.cluster]],
+                                        fillOpacity: .5
+
+                                    });
+                                }
+                            }).addTo(rMap);
+                            callback(null);
+                        }, (err) => {
+                            rMap.fitBounds([
+                                [envelope.q.bbox[1], envelope.q.bbox[0]],
+                                [envelope.q.bbox[3], envelope.q.bbox[2]]
+                            ]);
+                        });
+                        break;
+                    case 'wordCloud':
+                        Highcharts.seriesTypes.wordcloud.prototype.deriveFontSize = function(relativeWeight) {
+                            var maxFontSize = 50;
+                            return Math.floor(maxFontSize * Math.sqrt(relativeWeight));
+                        };
+                        Highcharts.chart('wc_' + ID, {
+                            series: [{
+                                type: 'wordcloud',
+                                plotOptions: {
+                                    series: {
+                                        turboThreshold: 0
+                                    }
+                                },
+                                data: envelope.result,
+                                name: 'Occurrences'
+                            }],
+                            title: {
+                                text: 'Wordcloud'
+                            }
+                        });
+                        break;
+                    case 'heatChart':
+                        let xAxis = {
+                            categories: []
+                        };
+                        let yAxis = {
+                            categories: []
+                        };
+                        for (let c = 0; c < Object.keys(envelope.result.schema).length; c++) {
+                            xAxis.categories.push(envelope.result.schema[c]);
+                        }
+                        let input = [],
+                            nRows = 0;
+                        envelope.result.data = envelope.result.data.slice(0, 100);
+                        async.eachOf(
+                            envelope.result.data,
+                            (val, key, cb) => {
+                                let col = [];
+                                nRows++;
+                                async.eachOfSeries(
+                                    val,
+                                    (v, k, cb2) => {
+                                        input.push([k, key, v]);
+                                        async.setImmediate(cb2, null);
+                                    },
+                                    (err) => {
+                                        async.setImmediate(cb, err);
+                                    }
+                                );
+                            },
+                            (err) => {
+                                async.times(nRows, (n, next) => {
+                                    yAxis.categories.push('#' + n);
+                                    async.setImmediate(next, null);
+                                }, (err) => {
+                                    Highcharts.chart('hc_' + ID, {
+                                        chart: {
+                                            type: 'heatmap',
+                                            marginTop: 40,
+                                            marginBottom: 80,
+                                            plotBorderWidth: 1
+                                        },
+                                        plotOptions: {
+                                            series: {
+                                                turboThreshold: 0
+                                            }
+                                        },
+                                        boost: {
+                                            useGPUTranslations: true,
+                                            usePreAllocated: true
+                                        },
+                                        tooltip: {
+                                            headerFormat: "",
+                                            useHTML: true,
+                                            formatter: function() {
+                                                return ((' ' + envelope.result.tweet[this.point.y] + ' ').replace(new RegExp('\s?' + xAxis.categories[this.point.x] + '\s?', 'i'), ' <span class="badge badge-info">' + xAxis.categories[this.point.x] + '</span> ')).trim() + '<br>tfidf=<b>' + this.point.value + '</b>';
+                                            }
+                                        },
+                                        title: {
+                                            text: envelope.opt.q
+                                        },
+                                        xAxis: xAxis,
+                                        yAxis: yAxis,
+                                        colorAxis: {
+                                            min: 0,
+                                            minColor: '#FFFFFF',
+                                            maxColor: Highcharts.getOptions().colors[0]
+                                        },
+                                        legend: {
+                                            align: 'right',
+                                            layout: 'vertical',
+                                            margin: 0,
+                                            verticalAlign: 'top',
+                                            y: 25,
+                                            symbolHeight: 280
+                                        },
+                                        series: [{
+                                            borderWidth: 0.5,
+                                            data: input
+                                        }]
+                                    });
+                                });
+                            });
+                        break;
+                    case 'scatter':
+                        let plotData = [];
+                        let maxX = 0;
+                        async.each(envelope.result, (item, callback) => {
+                            //console.log(envelope.opt.x + "=>" + item[envelope.opt.x], envelope.opt.y + "=>" + item[envelope.opt.y]);
+                            maxX = Math.max(maxX, item[envelope.opt.x]);
+                            plotData.push({
+                                x: item[envelope.opt.x],
+                                y: item[envelope.opt.y],
+                                properties: item
+                            });
+                            callback(null);
+                        }, (err) => {
+                            let myData = [{
+                                type: 'scatter',
+                                name: 'Result',
+                                data: plotData
+                            }];
+                            if (envelope.opt.regression) {
+                                myData.push({
+                                    type: 'line',
+                                    name: 'Regression Line',
+                                    data: [
+                                        [0, envelope.opt.regression.yIntercept],
+                                        [maxX, (maxX * envelope.opt.regression.gradient) + envelope.opt.regression.yIntercept]
+                                    ]
+                                });
+                            }
+                            Highcharts.chart('plot_' + ID, {
+                                plotOptions: {
+                                    series: {
+                                        turboThreshold: 0
+                                    }
+                                },
+                                title: {
+                                    text: '散布図の例'
+                                },
+                                subtitle: {
+                                    text: envelope.opt.x + ' x ' + envelope.opt.y
+                                },
+                                tooltip: {
+                                    pointFormat: '<div style="width:150px;height:150px;"><img src="{point.properties.url}" style="max-width:100%;max-height:100%;display: block;margin-left: auto;margin-right: auto;"></div>',
+                                    shared: true,
+                                    useHTML: true
+                                },
+                                yAxis: {
+                                    gridLineWidth: 1,
+                                    title: {
+                                        text: envelope.opt.y,
+                                        align: 'middle',
+                                    }
+                                },
+                                xAxis: {
+                                    gridLineWidth: 1,
+                                    title: {
+                                        text: envelope.opt.x,
+                                        align: 'middle',
+                                    }
+                                },
+                                series: myData
+                            });
+                        });
+                        break;
+                    case 'table':
+                        break;
+                    default:
+                }
+
+            }
+            let ws = new WebSocket("ws://localhost:8081/", ["sobig"]);
             ws.onopen = function() {
                 ws.onmessage = function(message) {
                     //サーバから受信
                     const envelope = JSON.parse(message.data);
-                    $('<div>', {
-                        class: 'alert alert-primary',
-                        role: 'alert',
-                        html: '<b>' + envelope.name + '</b>: ' + envelope.message
-                    }).prependTo($('#main'));
+                    switch (envelope.type) {
+                        case 'capabilities':
+                            envelope.algorithm.forEach((algo) => {
+                                $('#form-algorithm').append($('<option>')
+                                    .val(algo)
+                                    .text(algo))
+                            });
+                            envelope.dataset.forEach((ds) => {
+                                $('#form-dataset').append($('<option>')
+                                    .val(ds)
+                                    .text(ds))
+                            });
+                            break;
+                        default:
+                            console.log('results');
+                            showResult(envelope);
+                            break;
+                    }
+
                 };
                 $('#chat-form').on('submit', function() {
                     //サーバへ送信
                     const envelope = {
-                        "name": $('#chat-hn').val(),
-                        "message": $('#chat-text').val()
+                        "dataset": $('#form-dataset').val(),
+                        "algorithm": $('#form-algorithm').val(),
+                        "bbox": $('#form-bbox').val(),
+                        "q": $('#form-q').val(),
+                        "opt": $('#form-opt').val()
                     };
+                    console.log(envelope);
                     ws.send(JSON.stringify(envelope));
-                    $('#chat-text').val("");
                     return false;
                 });
+                let marker0, marker1, polygon;
+                let map = L.map('bboxmap').setView([51.505, -0.09], 13);
+                let tileLayer = new L.StamenTileLayer("toner").addTo(map);
+                let drawBBOX = () => {
+                    if (polygon != null) {
+                        polygon.remove();
+                    }
+                    let p0 = marker0.getLatLng();
+                    let p1 = marker1.getLatLng();
+                    polygon = L.polygon([
+                        [p0.lat, p0.lng],
+                        [p0.lat, p1.lng],
+                        [p1.lat, p1.lng],
+                        [p1.lat, p0.lng],
+                        [p0.lat, p0.lng]
+                    ]).addTo(map);
+                    $('#form-bbox').val(Math.min(p0.lng, p1.lng) + ',' + Math.min(p0.lat, p1.lat) + ',' + Math.max(p0.lng, p1.lng) + ',' + Math.max(p0.lat, p1.lat));
+                    $('#form-bbox').attr('data-original-title', $('#form-bbox').val().split(',').join('<br>'));
+                }
+                $('#modal-bbox').on('show.bs.modal', () => {
+                    if ($('#form-bbox').val() == "") {
+                        if (typeof marker0 == 'undefined') {
+                            marker0 = new L.marker(new L.LatLng(33.8033472462, -117.9284303757), {
+                                draggable: 'true'
+                            }).addTo(map);
+                            marker0.on('drag', () => {
+                                drawBBOX();
+                            });
+                        }
+                        if (typeof marker1 == 'undefined') {
+                            marker1 = new L.marker(new L.LatLng(33.8179668395, -117.9152696693), {
+                                draggable: 'true'
+                            }).addTo(map);
+                            marker1.on('drag', () => {
+                                drawBBOX();
+                            });
+                        }
+                        drawBBOX();
+                    }
+                    map.panInsideBounds(new L.latLngBounds(marker0.getLatLng(), marker1.getLatLng()));
+                    setTimeout(() => {
+                        map.invalidateSize();
+                    }, 1000);
+                });
+                $('#form-bbox').on('click', () => {
+                    $('#modal-bbox').modal('show');
+                })
             }
         });
     </script>

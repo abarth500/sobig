@@ -18,6 +18,7 @@
 | posix-argv-parser     | 2.0.0     |https://www.npmjs.com/package/posix-argv-parser |
 | python-shell          | 0.5.0     |https://www.npmjs.com/package/python-shell |
 | query-overpass        | 1.5.3     |https://www.npmjs.com/package/query-overpass|
+| regression            | 2.0.1     | https://www.npmjs.com/package/regression |
 | turf                  | 5.1.6     |https://www.npmjs.com/package/@turf/turf |
 | twitter               | 1.7.1     |https://www.npmjs.com/package/twitter |
 | ws                    | 4.0.0     |https://www.npmjs.com/package/ws | 
@@ -27,3 +28,5 @@
     * https://developer.twitter.com/en/docs
 * Flickr API　リファレンス
     * https://www.flickr.com/services/api/ 
+* MongoDB JavaScript Driver API
+    * http://mongodb.github.io/node-mongodb-native/3.0/api/
