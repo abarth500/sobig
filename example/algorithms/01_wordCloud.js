@@ -1,5 +1,6 @@
 const async = require('async');
 module.exports = (q, opt, docs, callback) => {
+    opt.top = opt.top ? opt.top : 100;
     let result = {};
     let result2 = [];
     async.each(docs, (p, cbP) => {
@@ -22,9 +23,7 @@ module.exports = (q, opt, docs, callback) => {
                 };
             }
             result[word].weight++;
-
         });
-
         async.setImmediate(cbP, null);
     }, (err) => {
         Object.keys(result).forEach((word) => {
@@ -34,8 +33,8 @@ module.exports = (q, opt, docs, callback) => {
             return b.weight - a.weight;
         });
         callback(null, {
-            'type': 'wordCloud', //or 'scatter'
-            'result': result2.slice(0, 100),
+            'type': 'wordCloud',
+            'result': result2.slice(0, opt.top),
             'q': q,
             'opt': opt
         });

@@ -6,8 +6,6 @@ from sklearn.model_selection import cross_validate, StratifiedKFold
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
-from sklearn import metrics
-import geojson
 
 inpt = sys.stdin.readline()
 inpt = json.loads(inpt)

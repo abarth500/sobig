@@ -23,7 +23,7 @@ module.exports = (q, opt, docs, callback) => {
         }
     });
     callback(null, {
-        'type': 'map-clustered', //or 'scatter'
+        'type': 'map-clustered',
         'result': result,
         'q': q,
         'opt': opt

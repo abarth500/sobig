@@ -24,11 +24,8 @@ module.exports = (q, opt, docs, callback) => {
         }
         sobig_filtering(v, opt.filter, (err, pass) => {
             if (pass) {
-                console.log("pass");
                 result.push(v);
                 series.push([v[opt.x], v[opt.y]]);
-            } else {
-                console.log("no pass");
             }
             cbP(err);
         })
@@ -39,7 +36,7 @@ module.exports = (q, opt, docs, callback) => {
             yIntercept: line.equation[1]
         }
         callback(null, {
-            'type': 'scatter', //or 'scatter'
+            'type': 'scatter',
             'result': result,
             'q': q,
             'opt': opt

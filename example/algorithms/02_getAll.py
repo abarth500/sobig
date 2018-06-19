@@ -1,6 +1,11 @@
 import sys
 import json
 
+if "map" not in opt:
+    opt["map"] = "map"
+elif opt["map"] != "map":
+    opt["map"] == "heat":
+
 inpt = sys.stdin.readline()
 inpt = json.loads(inpt)
 docs = inpt["docs"]

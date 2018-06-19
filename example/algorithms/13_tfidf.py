@@ -2,7 +2,6 @@ import sys
 import json
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
-import geojson
 
 np.set_printoptions(precision=2)
 
@@ -41,6 +40,6 @@ for k,v in sorted(vectorizer.vocabulary_.items(), key=lambda x:x[1]):
     schema[str(v)] = k
 
 rtn = {"type":"heatChart", "result":{"schema":schema,"data":result,"tweet":source}, "q":q, "opt":opt}
-print(geojson.dumps(rtn))
+print(json.dumps(rtn))
 
 sys.exit(0)
