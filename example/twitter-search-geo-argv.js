@@ -8,18 +8,18 @@ var pap = require("posix-argv-parser");
 var args = pap.create();
 var v = pap.validators;
 args.createOption(["-y", "--latitude"], {
-    defaultValue: 0,
-    validators: [v.number("Custom message. ${1} must be a Float.")],
+    defaultValue: .0,
+    validators: [v.number("Error: ${1} must be a Float.")],
     transform: (value) => { return parseFloat(value); }
 });
 args.createOption(["-x", "--longitude"], {
-    defaultValue: 0,
-    validators: [v.number("Custom message. ${1} must be a Float.")],
+    defaultValue: .0,
+    validators: [v.number("Error: ${1} must be a Float.")],
     transform: (value) => { return parseFloat(value); }
 });
 args.createOption(["-r", "--radius"], {
     defaultValue: 0,
-    validators: [v.integer("Custom message. ${1} must be a Integer.")],
+    validators: [v.integer("Error: ${1} must be a Integer.")],
     transform: (value) => { return parseInt(value, 10); }
 });
 args.createOption(["-q", "--query"], {
@@ -36,13 +36,14 @@ async.waterfall([
                 url: 'mongodb://localhost:27017',
                 dbName: 'sobig',
                 colName: 'twitter',
-                lat: options["--latitude"].value,
-                lon: options["--longitude"].value,
-                radius: options["--radius"].value,
                 query: options["--query"].value,
                 language: options["--lang"].value
             };
-            console.log('ARGV', options["--latitude"].value, options["--longitude"].value, options["--radius"].value, options["--query"].value);
+            if (options["--radius"].value !== 0) {
+                opt.lat = options["--latitude"].value;
+                opt.lon = options["--longitude"].value;
+                opt.radius = options["--radius"].value;
+            }
             callback(err, opt);
         });
     },
@@ -100,8 +101,11 @@ async.waterfall([
     },
     (opt, col, callback) => {
         //結果をデータベースに格納する
+        let nn = 0;
         const insertDB = (tweets, fin) => {
                 //console.log(tweets);
+                let n = 0,
+                    dup = 0;
                 async.eachSeries(tweets.statuses, (status, finStatus) => {
                     //重要な項目のみ抜粋
                     const item = {
@@ -121,12 +125,21 @@ async.waterfall([
                         item.tags.push(tag.text);
                     });
                     col.insertOne(item, { w: 1 }).then(() => {
+                        n++;
                         finStatus(null);
                     }).catch((error) => {
-                        console.log("ERROR:", error.message);
+                        //console.log("ERROR:", error.message);
+                        dup++;
                         finStatus(null);
                     });
                 }, (error) => {
+                    if (error) {
+                        console.log('失敗(Insert)', error);
+                    } else {
+                        nn += n;
+                        console.log("\t" + dup + '件の重複除去');
+                        console.log("\t" + n + '件挿入 (全' + nn + '件)');
+                    }
                     fin(error);
                 });
             }
@@ -141,14 +154,14 @@ async.waterfall([
                 count: count,
                 max_id: '9000000000000000000',
             };
-            if (opt.radius !== 0) {
+            if (opt.radius) {
                 qOpt.geocode = opt.lat + "," + opt.lon + "," + opt.radius + "km";
             }
             //結果が返ってこなくなるまで時間を遡りつつTweet取得
             let tick = Date.now();
             async.doWhilst(
                 (nextQuery) => {
-                    console.log("[Q]", qOpt);
+                    console.log("[Q]", qOpt.max_id);
                     client.get('search/tweets', qOpt)
                         .then((tweets) => {
                             console.log(tweets.statuses.length + "件取得");
@@ -158,8 +171,8 @@ async.waterfall([
                                 qOpt.max_id = tweets.statuses[lastNoQ - 1].id_str;
                                 let d0 = new Date(tweets.statuses[0].created_at)
                                 let d1 = new Date(tweets.statuses[lastNoQ - 1].created_at)
-                                console.log("\tmax = " + qOpt.max_id)
-                                console.log("\tdate=" + d0 + " -> " + d1);
+                                    //console.log("\tmax :" + qOpt.max_id)
+                                console.log("\tdate :" + d0 + " -> " + d1);
                             }
                             let wait = 5000 - (Date.now() - tick);
                             console.log("\twait=" + wait);

@@ -8,18 +8,18 @@ var pap = require("posix-argv-parser");
 var args = pap.create();
 var v = pap.validators;
 args.createOption(["-y", "--latitude"], {
-    defaultValue: 35.659043874914,
-    validators: [v.number("Custom message. ${1} must be a Float.")],
+    defaultValue: .0,
+    validators: [v.number("Error: ${1} must be a Float.")],
     transform: (value) => { return parseFloat(value); }
 });
 args.createOption(["-x", "--longitude"], {
-    defaultValue: 139.70059168537,
-    validators: [v.number("Custom message. ${1} must be a Float.")],
+    defaultValue: .0,
+    validators: [v.number("Error: ${1} must be a Float.")],
     transform: (value) => { return parseFloat(value); }
 });
 args.createOption(["-r", "--radius"], {
-    defaultValue: 5,
-    validators: [v.integer("Custom message. ${1} must be a Integer.")],
+    defaultValue: 0,
+    validators: [v.integer("Error: ${1} must be a Integer.")],
     transform: (value) => { return parseInt(value, 10); }
 });
 args.createOption(["-q", "--query"], {
@@ -32,13 +32,16 @@ async.waterfall([
             const opt = {
                 url: 'mongodb://localhost:27017',
                 dbName: 'sobig',
-                colName: 'flickr',
-                lat: options["--latitude"].value,
-                lon: options["--longitude"].value,
-                radius: options["--radius"].value,
-                query: options["--query"].value
+                colName: 'flickr'
             };
-            console.log('ARGV', options["--latitude"].value, options["--longitude"].value, options["--radius"].value, options["--query"].value);
+            if (options["--query"].value != "") {
+                opt.query = options["--query"].value
+            }
+            if (options["--radius"].value !== 0) {
+                opt.lat = options["--latitude"].value;
+                opt.lon = options["--longitude"].value;
+                opt.radius = options["--radius"].value;
+            }
             callback(err, opt);
         });
     },
@@ -99,7 +102,8 @@ async.waterfall([
         //結果をデータベースに格納する
         let nn = 0;
         const insertDB = function(photos, fin) {
-            let n = 0;
+            let n = 0,
+                dup = 0;
             async.each(photos, (photo, finPhoto) => {
                 if (photo.exif && photo.exif.ExposureTime && photo.exif.FNumber) {
                     //重要な項目のみ抜粋とExifの変形
@@ -112,19 +116,24 @@ async.waterfall([
                         tags: photo.tags == "" ? [] : photo.tags.split(' '),
                         exif: exif(photo.exif),
                         url: photo.url_m,
-                        geotag: {
+                        geotag: null
+                    };
+                    //もしジオタグが付いていれば・・・
+                    if (photo.longitude == 0 && photo.latitude == 0 && photo.latitude == 0) {
+                        item.geotag = {
                             "type": "Point",
                             "coordinates": [
                                 parseFloat(photo.longitude),
                                 parseFloat(photo.latitude)
                             ]
-                        }
-                    };
+                        };
+                    }
                     col.insertOne(item, { w: 1 }).then(() => {
                         n++;
                         finPhoto(null);
                     }).catch((error) => {
-                        console.log("ERROR:", error.message);
+                        //console.log("ERROR:", error.message);
+                        dup++;
                         finPhoto(null);
                     });
                 } else {
@@ -135,6 +144,7 @@ async.waterfall([
                     console.log('失敗(Insert)', photo.dateupload, error);
                 } else {
                     nn += n;
+                    console.log("\t" + dup + '件の重複除去');
                     console.log("\t" + n + '件挿入　(全' + nn + '件)');
                 }
                 fin(error);
@@ -143,22 +153,26 @@ async.waterfall([
 
         //Flickrに問い合わせを行う
         const per_page = 250; /* リクエストあたりの写真取得数 */
-        const queryFlickr = function(lat, lon, radius, fin) {
+        const queryFlickr = function(q, lat, lon, radius, fin) {
             let maxDate = Math.floor((new Date()).getTime() / 1000);
             let isLast = false;
+            let qOpt = {
+                max_upload_date: maxDate,
+                per_page: per_page
+            };
+            if (radius == 0) {
+                qOpt.has_geo = 1;
+                qOpt.lat = lat;
+                qOpt.lon = lon;
+                qOpt.extras = 'geo,' + qOpt.extras;
+            }
+            if (q != '') {
+                qOpt.text = q;
+            }
             async.doWhilst(
                 (nextQuery) => {
                     console.log("[Q]", new Date(maxDate * 1000).toISOString());
-                    flickr.photos.search({
-                        lat: lat,
-                        lon: lon,
-                        radius: radius,
-                        has_geo: 1,
-                        max_upload_date: maxDate,
-                        sort: 'date-posted-desc',
-                        extras: 'date_upload,date_taken,tags,url_m,geo',
-                        per_page: per_page
-                    }).then((resSearch) => {
+                    flickr.photos.search(qOpt).then((resSearch) => {
                         let photos = resSearch.body.photos;
                         console.log("Length:" + photos.photo.length, "Perpage:" + photos.perpage, "Pages:" + photos.pages, "Page:" + photos.page);
                         isLast = photos.pages == photos.page;
@@ -166,6 +180,7 @@ async.waterfall([
                             photo.dateupload = parseInt(photo.dateupload);
                             photo.datetaken = Math.round(new Date(photo.datetaken) / 1000);
                             maxDate = Math.min(maxDate, photo.dateupload);
+                            maxDate--; //厳密に言えば同じ時刻にアップロードされた写真が250枚以上ある時はこの方法では取り逃しが生じる
                             flickr.photos.getExif({
                                 photo_id: photo.id
                             }).then((resExif) => {
@@ -176,7 +191,7 @@ async.waterfall([
                                 });
                                 finPhoto(null, photo);
                             }).catch((error) => {
-                                console.log("[SKIP]: ", photo.id, "(No Exif)");
+                                //console.log("[SKIP]: ", photo.id, "(No Exif)");
                                 finPhoto(null, photo);
                             });
                         }, (error, photosWithEXIF) => {
@@ -195,7 +210,7 @@ async.waterfall([
                 }
             );
         }
-        queryFlickr(opt.lat, opt.lon, opt.radius, callback);
+        queryFlickr(opt.q, opt.lat, opt.lon, opt.radius, callback);
     }
 ], (error) => {
     if (error) {

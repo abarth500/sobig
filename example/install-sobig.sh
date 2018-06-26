@@ -1,3 +1,6 @@
+ # 地理空間データ処理ライブラリturfのインストール
+npm install --save @turf/turf
+
  # Regression Lineの算出用ライブラリ
 npm install --save regression
  

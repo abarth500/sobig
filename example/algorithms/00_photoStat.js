@@ -9,6 +9,8 @@ module.exports = (q, opt, docs, callback) => {
             ["$ISO", "<=", 100]
         ];
     }
+    opt.regression = opt.regression ? opt.regression : false;
+
     let result = [];
     let series = [];
     async.each(docs, (p, cbP) => {
@@ -30,10 +32,12 @@ module.exports = (q, opt, docs, callback) => {
             cbP(err);
         })
     }, (err) => {
-        const line = regression.linear(series);
-        opt.regression = {
-            gradient: line.equation[0],
-            yIntercept: line.equation[1]
+        if (opt.regression !== false) {
+            const line = regression.linear(series);
+            opt.regression = {
+                gradient: line.equation[0],
+                yIntercept: line.equation[1]
+            }
         }
         callback(null, {
             'type': 'scatter',

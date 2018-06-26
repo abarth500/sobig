@@ -12,7 +12,7 @@ const values = {
     'html': path.join(__dirname, 'sobig-client.html'),
     'js': {
         '/palette.js': 'util/palette.js/palette.js',
-        '/leaflet-heat.js': 'util/heat.js'
+        '/leaflet-heat.js': 'util/heatmap/dist/leaflet-heat.js'
     },
     'http': 8080,
     'websocket': 8081,

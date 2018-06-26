@@ -17,7 +17,7 @@ module.exports = (q, opt, docs, callback) => {
         result[p.properties.cluster].features.push(p);
     });
     callback(null, {
-        'type': 'map-clustered', //or 'scatter'
+        'type': 'map-clustered',
         'result': result,
         'q': q,
         'opt': opt

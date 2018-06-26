@@ -7,7 +7,7 @@ module.exports = (q, opt, docs, callback) => {
         }
     });
     callback(null, {
-        'type': opt.map, //or 'scatter'
+        'type': opt.map,
         'result': result,
         'q': q,
         'opt': opt
