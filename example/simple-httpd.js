@@ -3,14 +3,14 @@ const http = require('http'),
     path = require('path'),
     filename = path.join(__dirname, 'simple.html');
 
-fs.readFile(filename, 'binary', function(err, filecontent) {
-    http.createServer(function(request, response) {
+fs.readFile(filename, 'binary', (err, filecontent) => {
+    http.createServer((request, response) => {
         if (err) {
             response.writeHead(404, { 'Content-Type': 'text/plain' });
             response.write("404 Not Found\n");
             response.end();
         } else {
-            let header = {
+            const header = {
                 'Access-Control-Allow-Origin': '*',
                 'Pragma': 'no-cache',
                 'Cache-Control': 'no-cache'

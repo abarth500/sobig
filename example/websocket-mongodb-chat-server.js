@@ -4,7 +4,6 @@ const http = require('http'),
     path = require('path'),
     async = require('async'),
     mongoClient = require('mongodb').MongoClient;
-
 const values = {
     'html': path.join(__dirname, 'websocket-mongo-chat-client.html'),
     'http': 8080,
@@ -45,7 +44,7 @@ async.mapValues(values,
             throw new Error('接続初期化エラー' + JSON.stringify(err));
         }
         $['http'].on('request', (request, response) => {
-            let header = {
+            const header = {
                 'Content-Type': 'text/html',
                 'Access-Control-Allow-Origin': '*',
                 'Pragma': 'no-cache',
@@ -56,14 +55,14 @@ async.mapValues(values,
             response.end();
         });
 
-        $['websocket'].on('connection', function(client) {
+        $['websocket'].on('connection', (client) => {
             $['mongodb'].find({}).sort({ time: -1 })
                 .limit(5).toArray((err, docs) => {
                     async.eachSeries(docs, (doc, fin) => {
                         client.send(JSON.stringify(doc), fin);
                     });
                 });
-            client.on('message', function(message) {
+            client.on('message', (message) => {
                 message = JSON.parse(message);
                 message.time = Date.now();
                 async.parallel([

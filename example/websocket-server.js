@@ -5,21 +5,21 @@ const http = require('http'),
 
 const filename = path.join(__dirname, 'websocket-client.html');
 const wss = new ws.Server({ port: 8081 });
-wss.on('connection', function(client) {
-    client.on('message', function(message) {
+wss.on('connection', (client) => {
+    client.on('message', (message) => {
         console.log('received: %s', message);
     });
     client.send('Hello WebSocket World from server!');
 });
-
-fs.readFile(filename, 'binary', function(err, filecontent) {
-    http.createServer(function(request, response) {
+//以後Webサーバの立ち上げが続く
+fs.readFile(filename, 'binary', (err, filecontent) => {
+    http.createServer((request, response) => {
         if (err) {
             response.writeHead(404, { 'Content-Type': 'text/plain' });
             response.write("404 Not Found\n");
             response.end();
         } else {
-            let header = {
+            const header = {
                 'Content-Type': 'text/html',
                 'Access-Control-Allow-Origin': '*',
                 'Pragma': 'no-cache',

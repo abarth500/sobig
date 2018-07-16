@@ -2,7 +2,7 @@ const mongoClient = require('mongodb').MongoClient;
 const url = 'mongodb://localhost:27017',
     dbName = 'sobig';
 
-mongoClient.connect(url, function(err, client) {
+mongoClient.connect(url, (err, client) => {
     if (!err) {
         process.on('SIGINT', () => {
             console.log('切断して終了します。');

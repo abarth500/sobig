@@ -5,10 +5,10 @@ const http = require('http'),
 
 const filename = path.join(__dirname, 'websocket-chat-client.html');
 const wss = new ws.Server({ port: 8081 });
-wss.on('connection', function(client) {
-    client.on('message', function(message) {
+wss.on('connection', (client) => {
+    client.on('message', (message) => {
         console.log('received: %s', message);
-        wss.clients.forEach(function each(_client) {
+        wss.clients.forEach((_client) => {
             if (_client.readyState === ws.OPEN) {
                 _client.send(message);
             }
@@ -17,14 +17,14 @@ wss.on('connection', function(client) {
     client.send('Hello From WebSocket Chat Server!');
 });
 
-fs.readFile(filename, 'binary', function(err, filecontent) {
-    http.createServer(function(request, response) {
+fs.readFile(filename, 'binary', (err, filecontent) => {
+    http.createServer((request, response) => {
         if (err) {
             response.writeHead(404, { 'Content-Type': 'text/plain' });
             response.write("404 Not Found\n");
             response.end();
         } else {
-            let header = {
+            const header = {
                 'Content-Type': 'text/html',
                 'Access-Control-Allow-Origin': '*',
                 'Pragma': 'no-cache',
