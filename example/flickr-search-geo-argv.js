@@ -4,9 +4,9 @@ const Flickr = require('flickr-sdk'),
     apikeys = require(__dirname + '/sns-api-keys.json');
 const flickr = new Flickr(apikeys.flickr.consumer_key);
 
-var pap = require("posix-argv-parser");
-var args = pap.create();
-var v = pap.validators;
+const pap = require("posix-argv-parser");
+const args = pap.create();
+const v = pap.validators;
 args.createOption(["-y", "--latitude"], {
     defaultValue: .0,
     validators: [v.number("Error: ${1} must be a Float.")],
@@ -29,7 +29,7 @@ args.createOption(["-q", "--query"], {
 async.waterfall([
     (callback) => {
         args.parse(process.argv.slice(2), (err, options) => {
-            const opt = {
+            let opt = {
                 url: 'mongodb://localhost:27017',
                 dbName: 'sobig',
                 colName: 'flickr'
@@ -101,7 +101,7 @@ async.waterfall([
     (opt, col, callback) => {
         //結果をデータベースに格納する
         let nn = 0;
-        const insertDB = function(photos, fin) {
+        const insertDB = (photos, fin) => {
             let n = 0,
                 dup = 0;
             async.each(photos, (photo, finPhoto) => {
@@ -153,7 +153,7 @@ async.waterfall([
 
         //Flickrに問い合わせを行う
         const per_page = 250; /* リクエストあたりの写真取得数 */
-        const queryFlickr = function(q, lat, lon, radius, fin) {
+        const queryFlickr = (q, lat, lon, radius, fin) => {
             let maxDate = Math.floor((new Date()).getTime() / 1000);
             let isLast = false;
             let qOpt = {

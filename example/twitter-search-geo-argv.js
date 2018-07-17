@@ -175,7 +175,7 @@ async.waterfall([
                                 console.log("\tdate :" + d0 + " -> " + d1);
                             }
                             let wait = 5000 - (Date.now() - tick);
-                            console.log("\twait=" + wait);
+                            //console.log("\twait=" + wait);
                             setTimeout(async.apply(insertDB, tweets, (err) => {
                                 tick = Date.now();
                                 nextQuery(err);

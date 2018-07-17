@@ -31,7 +31,7 @@ async.waterfall([
     },
     (col, callback) => {
         //結果をデータベースに格納する
-        const insertDB = function(tweets, fin) {
+        const insertDB = (tweets, fin) => {
             async.each(tweets.statuses, (status, finStatus) => {
                 //重要な項目のみ抜粋
                 const item = {
@@ -63,7 +63,7 @@ async.waterfall([
 
         //Twitterに問い合わせを行う
         let count = 100; /* リクエストあたりのTweet取得数 */
-        const queryTwitter = function(q, geo, fin) {
+        const queryTwitter = (q, geo, fin) => {
             let maxID = '5000000000000000000';
             let lastNoQ = count;
             //結果が返ってこなくなるまで時間を遡りつつTweet取得

@@ -4,17 +4,19 @@ const Flickr = require('flickr-sdk'),
     apikeys = require(__dirname + '/sns-api-keys.json');
 const flickr = new Flickr(apikeys.flickr.consumer_key);
 
-const url = 'mongodb://localhost:27017',
-    dbName = 'sobig',
-    colName = 'flickr',
-    lat = 35.659043874914,
-    lon = 139.70059168537,
-    radius = 3;
+const opt = {
+    url: 'mongodb://localhost:27017',
+    dbName: 'sobig',
+    colName: 'flickr',
+    lat: 35.659043874914,
+    lon: 139.70059168537,
+    radius: 3
+};
 
 async.waterfall([
     (callback) => {
         //接続処理
-        mongoClient.connect(url, callback);
+        mongoClient.connect(opt.url, callback);
     },
     (client, callback) => {
         //接続後の処理
@@ -30,7 +32,7 @@ async.waterfall([
             col = db.collection(colName);
         callback(null, col);
     },
-    (opt, client, callback) => {
+    (client, callback) => {
         //接続後の処理
         process.on('exit', () => {
             console.log('データベースの接続を切断して終了します。');
@@ -42,29 +44,40 @@ async.waterfall([
         });
         const db = client.db(opt.dbName),
             col = db.collection(opt.colName);
-        callback(null, opt, col);
+        callback(null, col);
     },
-    (opt, col, callback) => {
+    (col, callback) => {
         //データ削除(もしコレクションが空でなければ)
         col.count({}, {}, (error, result) => {
             if (error) {
-                callback(error, opt, col);
+                callback(error, col);
             } else {
                 if (result > 0) {
                     col.dropIndexes().then(() => {
                         col.remove({}, { 'w': 1 }).then(() => {
-                            callback(error, opt, col);
+                            callback(error, col);
                         }).catch((error) => {
-                            callback(error, opt, col);
+                            callback(error, col);
                         });
                     }).catch((error) => {
-                        callback(error, opt, col);
+                        callback(error, col);
                     });
                 } else {
-                    callback(error, opt, col);
+                    callback(error, col);
                 }
             }
         });
+    },
+    (col, callback) => {
+        //コレクションの再構築
+        col.createIndexes([
+            { key: { id: 1 }, unique: true },
+            { key: { geotag: "2dsphere" } },
+            { key: { dateupload: 1 } },
+            { key: { datetaken: 1 } }
+        ], {}, (error) => {
+            callback(error, col);
+        })
     },
     (col, callback) => {
         //結果をデータベースに格納する
@@ -114,7 +127,7 @@ async.waterfall([
 
         //Flickrに問い合わせを行う
         const per_page = 250; /* リクエストあたりの写真取得数 */
-        const queryFlickr = function(lat, lon, radius, fin) {
+        const queryFlickr = (lat, lon, radius, fin) => {
             let maxDate = Math.floor((new Date()).getTime() / 1000);
             let isLast = false;
             async.doWhilst(
@@ -164,7 +177,7 @@ async.waterfall([
                 }
             );
         }
-        queryFlickr(lat, lon, radius, callback);
+        queryFlickr(opt.lat, opt.lon, opt.radius, callback);
     }
 ], (error) => {
     if (error) {
