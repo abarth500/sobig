@@ -91,7 +91,7 @@ async.mapValues(values,
                                     // received a message sent from the Python script (a simple "print" statement)
                                     output += message;
                                 });
-                                pyshell.on('error', function(err) {
+                                pyshell.on('error', (err) => {
                                     throw err
                                 });
                                 pyshell.end((err, code, signal) => {
@@ -151,13 +151,13 @@ async.mapValues(values,
             }
         });
 
-        $['websocket'].on('connection', function(client) {
+        $['websocket'].on('connection', (client) => {
             client.send(JSON.stringify({
                 'type': 'capabilities',
                 'algorithm': Object.keys($['algoJS']).concat(Object.keys($['algoPY'])),
                 'dataset': Object.keys($['mongodb'])
             }));
-            client.on('message', function(envelope) {
+            client.on('message', (envelope) => {
                 envelope = JSON.parse(envelope);
 
                 envelope.time = Date.now();

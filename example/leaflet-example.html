@@ -9,7 +9,7 @@
     <script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.3.0"></script>
     <script type='text/javascript'>
         //leaflet OSM map
-        function init() {
+        const init = () => {
             var map = L.map('map');
             map.setView([35.658581, 139.745433], 14);
             var tileLayer = new L.StamenTileLayer("toner");

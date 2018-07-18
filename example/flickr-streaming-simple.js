@@ -4,7 +4,7 @@ const Flickr = require('flickr-sdk'),
 const flickr = new Flickr(apikeys.flickr.consumer_key);
 
 
-new CronJob('*/30 * * * * *', function() {
+new CronJob('*/30 * * * * *', () => {
     flickr.photos.getRecent({
         extras: 'tags,url_m'
     }).then((response) => {

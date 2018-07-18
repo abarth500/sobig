@@ -32,10 +32,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
     <script>
-        $(function() {
+        $(() => {
             let ws = new WebSocket("ws://localhost:8081/", ["test"]);
-            ws.onopen = function() {
-                ws.onmessage = function(message) {
+            ws.onopen = () => {
+                ws.onmessage = (message) => {
                     //サーバから受信
                     const envelope = JSON.parse(message.data);
                     $('<div>', {
@@ -45,7 +45,7 @@
                             ' <small>[' + (new Date(envelope.time)).toLocaleString() + ']</small>'
                     }).prependTo($('#main'));
                 };
-                $('#chat-form').on('submit', function() {
+                $('#chat-form').on('submit', () => {
                     //サーバへ送信
                     const envelope = {
                         "name": $('#chat-hn').val(),

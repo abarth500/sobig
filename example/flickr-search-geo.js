@@ -82,7 +82,7 @@ async.waterfall([
     (col, callback) => {
         //結果をデータベースに格納する
         let nn = 0;
-        const insertDB = function(photos, fin) {
+        const insertDB = (photos, fin) => {
             let n = 0;
             async.each(photos, (photo, finPhoto) => {
                 if (photo.exif && photo.exif.ExposureTime && photo.exif.FNumber) {

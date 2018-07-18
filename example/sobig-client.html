@@ -77,13 +77,13 @@
     <script src="palette.js"></script>
 
     <script>
-        $(function() {
+        $(() => {
             $('[data-toggle="tooltip"]').tooltip();
             $('#clear-BBOX').on('click', () => {
                 $('#form-bbox').val('');
             });
             let rid = 0;
-            let showResult = function(envelope) {
+            let showResult = (envelope) => {
                 console.log(envelope);
                 $('#form-opt').val(JSON.stringify(envelope.opt));
                 let ID = rid++;
@@ -240,7 +240,7 @@
                         });
                         break;
                     case 'wordCloud':
-                        Highcharts.seriesTypes.wordcloud.prototype.deriveFontSize = function(relativeWeight) {
+                        Highcharts.seriesTypes.wordcloud.prototype.deriveFontSize = (relativeWeight) => {
                             var maxFontSize = 50;
                             return Math.floor(maxFontSize * Math.sqrt(relativeWeight));
                         };
@@ -313,7 +313,7 @@
                                         tooltip: {
                                             headerFormat: "",
                                             useHTML: true,
-                                            formatter: function() {
+                                            formatter: () => {
                                                 return ((' ' + envelope.result.tweet[this.point.y] + ' ').replace(new RegExp('\s?' + xAxis.categories[this.point.x] + '\s?', 'i'), ' <span class="badge badge-info">' + xAxis.categories[this.point.x] + '</span> ')).trim() + '<br>tfidf=<b>' + this.point.value + '</b>';
                                             }
                                         },
@@ -413,8 +413,8 @@
 
             }
             let ws = new WebSocket("ws://localhost:8081/", ["sobig"]);
-            ws.onopen = function() {
-                ws.onmessage = function(message) {
+            ws.onopen = () => {
+                ws.onmessage = (message) => {
                     //サーバから受信
                     const envelope = JSON.parse(message.data);
                     switch (envelope.type) {
@@ -437,7 +437,7 @@
                     }
 
                 };
-                $('#chat-form').on('submit', function() {
+                $('#chat-form').on('submit', () => {
                     //サーバへ送信
                     const envelope = {
                         "dataset": $('#form-dataset').val(),
