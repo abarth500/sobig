@@ -81,7 +81,7 @@
                         colors.push(item.exif.Flash.indexOf('Fired') >= 0 ? "rgb(255, 152, 0)" : "rgb(0, 121, 107)");
                         labels.push(item.url);
                     });
-                    var bubbleChart = new Chart(chartDiv, {
+                    const bubbleChart = new Chart(chartDiv, {
                         type: 'bubble',
                         data: {
                             datasets: [{

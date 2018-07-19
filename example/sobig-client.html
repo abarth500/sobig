@@ -202,7 +202,7 @@
                         });
                         rMap = L.map('map_' + ID).setView([51.505, -0.09], 13);
                         rLayer = new L.StamenTileLayer("toner").addTo(rMap);
-                        var heat = L.heatLayer(data, {
+                        const heat = L.heatLayer(data, {
                             radius: 15
                         }).addTo(rMap);
                         rMap.fitBounds([
@@ -241,7 +241,7 @@
                         break;
                     case 'wordCloud':
                         Highcharts.seriesTypes.wordcloud.prototype.deriveFontSize = (relativeWeight) => {
-                            var maxFontSize = 50;
+                            const maxFontSize = 50;
                             return Math.floor(maxFontSize * Math.sqrt(relativeWeight));
                         };
                         Highcharts.chart('wc_' + ID, {

@@ -1,4 +1,4 @@
-var turf = require('@turf/turf');
+const turf = require('@turf/turf');
 
 module.exports = (q, opt, docs, callback) => {
     opt.k = opt.k ? opt.k : 4;

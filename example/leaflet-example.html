@@ -10,21 +10,21 @@
     <script type='text/javascript'>
         //leaflet OSM map
         const init = () => {
-            var map = L.map('map');
+            const map = L.map('map');
             map.setView([35.658581, 139.745433], 14);
-            var tileLayer = new L.StamenTileLayer("toner");
-            /*var tileLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            const tileLayer = new L.StamenTileLayer("toner");
+            /*const tileLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://osm.org/copyright">OSM</a> contributors'
             });*/
             tileLayer.addTo(map);
 
-            var mapMarker = L.marker([35.658581, 139.745433]);
+            const mapMarker = L.marker([35.658581, 139.745433]);
             mapMarker.addTo(map);
 
-            var baseLayers = {
+            const baseLayers = {
                 "OpenStreetMap": tileLayer
             };
-            var overlays = {
+            const overlays = {
                 "Markers": mapMarker
             };
             L.control.layers(baseLayers, overlays).addTo(map);
