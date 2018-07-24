@@ -32,7 +32,7 @@ async.waterfall([
             let opt = {
                 url: 'mongodb://localhost:27017',
                 dbName: 'sobig',
-                colName: 'flickr'
+                colName: 'flickr_test'
             };
             if (options["--query"].value != "") {
                 opt.query = options["--query"].value
@@ -101,13 +101,15 @@ async.waterfall([
     (opt, col, callback) => {
         //結果をデータベースに格納する
         let nn = 0;
-        const insertDB = (photos, fin) => {
+        const insertDB = (photos, finInsert) => {
             let n = 0,
-                dup = 0;
+                dup = 0,
+                noexif = 0;
             async.each(photos, (photo, finPhoto) => {
                 if (photo.exif && photo.exif.ExposureTime && photo.exif.FNumber) {
                     //重要な項目のみ抜粋とExifの変形
                     const exif = require('./util/util.js').exif;　 /* 簡易的にExif情報を使いやすく変形 */
+
                     const item = {
                         dateupload: new Date(photo.dateupload * 1000),
                         datetaken: new Date(photo.datetaken * 1000),
@@ -137,6 +139,7 @@ async.waterfall([
                         finPhoto(null);
                     });
                 } else {
+                    noexif++;
                     finPhoto(null);
                 }
             }, (error) => {
@@ -144,10 +147,11 @@ async.waterfall([
                     console.log('失敗(Insert)', photo.dateupload, error);
                 } else {
                     nn += n;
+                    console.log("\t" + noexif + '件のEXIF無し写真');
                     console.log("\t" + dup + '件の重複除去');
                     console.log("\t" + n + '件挿入　(全' + nn + '件)');
                 }
-                fin(error);
+                finInsert(error);
             });
         }
 
@@ -158,12 +162,15 @@ async.waterfall([
             let isLast = false;
             let qOpt = {
                 max_upload_date: maxDate,
-                per_page: per_page
+                per_page: per_page,
+                sort: 'date-posted-desc',
+                extras: 'date_upload,date_taken,tags,url_m'
             };
-            if (radius == 0) {
+            if (radius != 0) {
                 qOpt.has_geo = 1;
                 qOpt.lat = lat;
                 qOpt.lon = lon;
+                qOpt.radius = radius;
                 qOpt.extras = 'geo,' + qOpt.extras;
             }
             if (q != '') {
@@ -181,6 +188,7 @@ async.waterfall([
                             photo.datetaken = Math.round(new Date(photo.datetaken) / 1000);
                             maxDate = Math.min(maxDate, photo.dateupload);
                             maxDate--; //厳密に言えば同じ時刻にアップロードされた写真が250枚以上ある時はこの方法では取り逃しが生じる
+                            qOpt.max_upload_date = maxDate;
                             flickr.photos.getExif({
                                 photo_id: photo.id
                             }).then((resExif) => {
@@ -195,7 +203,7 @@ async.waterfall([
                                 finPhoto(null, photo);
                             });
                         }, (error, photosWithEXIF) => {
-                            console.log("", photosWithEXIF.length + '件取得')
+                            console.log("", photosWithEXIF.length + '件取得');
                             insertDB(photosWithEXIF, nextQuery);
                         });
                     }).catch((error) => {

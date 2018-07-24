@@ -4,9 +4,9 @@ const Twitter = require('twitter'),
     apikeys = require(__dirname + '/sns-api-keys.json');
 const client = new Twitter(apikeys.twitter);
 
-var pap = require("posix-argv-parser");
-var args = pap.create();
-var v = pap.validators;
+const pap = require("posix-argv-parser");
+const args = pap.create();
+const v = pap.validators;
 args.createOption(["-y", "--latitude"], {
     defaultValue: .0,
     validators: [v.number("Error: ${1} must be a Float.")],

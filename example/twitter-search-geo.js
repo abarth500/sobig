@@ -7,8 +7,7 @@ const client = new Twitter(apikeys.twitter);
 const url = 'mongodb://localhost:27017',
     dbName = 'sobig',
     colName = 'twitter',
-    query = '渋谷',
-    geocode = '35.659043874914,139.70059168537,5km';
+    geocode = '35.659043874914,139.70059168537,3km';
 
 async.waterfall([
     (callback) => {
@@ -63,16 +62,15 @@ async.waterfall([
 
         //Twitterに問い合わせを行う
         let count = 100; /* リクエストあたりのTweet取得数 */
-        const queryTwitter = (q, geo, fin) => {
+        const queryTwitter = (geo, fin) => {
             let maxID = '5000000000000000000';
             let lastNoQ = count;
             //結果が返ってこなくなるまで時間を遡りつつTweet取得
             async.doWhilst(
                 (nextQuery) => {
-                    console.log("[Q]", maxID, q, geo);
+                    console.log("[Q]", maxID, geo);
                     client.get('search/tweets', {
                             geocode: geo,
-                            q: q,
                             count: count,
                             max_id: maxID
                         })
@@ -99,7 +97,7 @@ async.waterfall([
                 }
             );
         }
-        queryTwitter(query, geocode, callback);
+        queryTwitter(geocode, callback);
     },
 ], (error) => {
     if (error) {

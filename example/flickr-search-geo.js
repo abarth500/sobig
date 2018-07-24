@@ -28,20 +28,6 @@ async.waterfall([
             console.log('SIGINTを受け取りました。');
             process.exit(0);
         });
-        const db = client.db(dbName),
-            col = db.collection(colName);
-        callback(null, col);
-    },
-    (client, callback) => {
-        //接続後の処理
-        process.on('exit', () => {
-            console.log('データベースの接続を切断して終了します。');
-            client.close();
-        });
-        process.on('SIGINT', () => {
-            console.log('SIGINTを受け取りました。');
-            process.exit(0);
-        });
         const db = client.db(opt.dbName),
             col = db.collection(opt.colName);
         callback(null, col);

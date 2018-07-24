@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+</head>
+
+<body>
+    <div id="form" class="container">
+        <form id="chat-form">
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label for="chat-hn">名前:</label>
+                    <input type="text" class="form-control" id="chat-hn">
+                </div>
+                <div class="form-group col-md-8">
+                    <label for="chat-text">発言：</label>
+                    <input type="text" class="form-control" id="chat-text">
+                </div>
+                <div class="form-group col-md-1">
+                    <label for="chat-btn">&nbsp;&nbsp;</label>
+                    <button type="submit" class="btn btn-primary" id="chat-btn">発言</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="main" class="container">
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    <script>
+        $(function() {
+            let ws = new WebSocket("ws://localhost:8081/", ["test"]);
+            ws.onopen = function() {
+                ws.onmessage = function(message) {
+                    //サーバから受信
+                    const envelope = JSON.parse(message.data);
+                    $('<div>', {
+                        class: 'alert alert-primary',
+                        role: 'alert',
+                        html: '<b>' + envelope.name + '</b>: ' + envelope.message +
+                            ' <small>[' + (new Date(envelope.time)).toLocaleString() + ']</small>'
+                    }).prependTo($('#main'));
+                };
+                $('#chat-form').on('submit', function() {
+                    //サーバへ送信
+                    const envelope = {
+                        "name": $('#chat-hn').val(),
+                        "message": $('#chat-text').val()
+                    };
+                    ws.send(JSON.stringify(envelope));
+                    $('#chat-text').val("");
+                    return false;
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
