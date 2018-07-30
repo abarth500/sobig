@@ -32,7 +32,7 @@ async.waterfall([
             let opt = {
                 url: 'mongodb://localhost:27017',
                 dbName: 'sobig',
-                colName: 'flickr_test'
+                colName: 'flickr'
             };
             if (options["--query"].value != "") {
                 opt.query = options["--query"].value

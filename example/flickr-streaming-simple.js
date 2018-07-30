@@ -22,4 +22,4 @@ new CronJob('*/30 * * * * *', () => {
     }).catch((error) => {
         throw error;
     });
-}, null, false, 'Asia/Tokyo');
+}, null, true, 'Asia/Tokyo');
