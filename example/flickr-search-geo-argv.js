@@ -121,7 +121,7 @@ async.waterfall([
                         geotag: null
                     };
                     //もしジオタグが付いていれば・・・
-                    if (photo.longitude == 0 && photo.latitude == 0 && photo.latitude == 0) {
+                    if (typeof photo.longitude != 'undefined' || photo.longitude != null || photo.longitude != "") {
                         item.geotag = {
                             "type": "Point",
                             "coordinates": [
